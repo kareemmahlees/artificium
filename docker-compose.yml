@@ -1,0 +1,12 @@
+version: "3"
+services:
+  dev_db:
+    image: mysql
+    restart: always
+    container_name: artificum_dev_db
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_USER=artificum
+      - MYSQL_PASSWORD=artificum
+      - MYSQL_DATABASE=artificum

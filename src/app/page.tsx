@@ -12,11 +12,13 @@ export default function Home() {
             digital journey
           </h1>
         </div>
-        <div className="group mt-11 rounded-full bg-black backdrop-blur-md transition hover:bg-gradient-to-tr hover:from-blue-300 hover:to-green-300">
-          <button className="space-y-0 bg-gradient-to-tr from-blue-300 to-green-300 bg-clip-text px-6 py-4 font-semibold uppercase text-transparent transition group-hover:bg-transparent group-hover:text-black">
-            get started
-          </button>
-        </div>
+        <Link href={"/login"}>
+          <div className="group mt-11 rounded-full bg-black backdrop-blur-md transition duration-300 hover:bg-gradient-to-tr hover:from-blue-300 hover:to-green-300">
+            <button className="space-y-0 bg-gradient-to-tr from-blue-300 to-green-300 bg-clip-text px-6 py-4 font-semibold uppercase text-transparent transition duration-300 group-hover:bg-transparent group-hover:text-black">
+              get started
+            </button>
+          </div>
+        </Link>
       </div>
       <div className="from-27% mt-96 flex w-full flex-col items-center justify-center bg-gradient-to-r from-transparent via-black/60  to-transparent backdrop-blur-md">
         <div className="text-center text-4xl font-bold leading-[60px]">

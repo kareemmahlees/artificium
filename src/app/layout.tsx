@@ -1,5 +1,8 @@
+"use client";
 import "@/styles/globals.css";
-import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
+import { Providers } from "./providers";
+import { trpc } from "@/lib/trpc";
 
 const plusJakarata = Plus_Jakarta_Sans({ subsets: ["latin"] });
 
@@ -8,14 +11,14 @@ export const metadata = {
   description: "Empowering your digital journey",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={plusJakarata.className}>{children}</body>
+      <body className={plusJakarata.className}>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
+
+export default trpc.withTRPC(RootLayout);
