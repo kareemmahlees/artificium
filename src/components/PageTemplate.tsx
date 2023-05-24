@@ -1,9 +1,9 @@
-import React, { FC } from "react";
+import React, { FC, HTMLAttributes } from "react";
 import Image from "next/image";
 import clsx from "clsx";
 import Link from "next/link";
 
-interface PageTemplateProps {
+interface PageTemplateProps extends HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   flexLayout: "start" | "center";
 }

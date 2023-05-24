@@ -69,7 +69,7 @@ const Login: FC = ({}) => {
           </div>
           <div
             className="flex w-2/3 items-center justify-between gap-5 text-nobleBlack-400"
-            onClick={(e) => signIn("google")}
+            onClick={(e) => signIn("google", { callbackUrl: "/workspaces" })}
           >
             <div className="flex w-1/2 cursor-pointer items-center justify-center gap-2 rounded-lg bg-nobleBlack-600 px-4 py-3 text-center">
               <Image
@@ -82,7 +82,7 @@ const Login: FC = ({}) => {
             </div>
             <div
               className="flex w-1/2 cursor-pointer items-center justify-center gap-2 rounded-lg bg-nobleBlack-600 px-4 py-3 text-center"
-              onClick={(e) => signIn("github")}
+              onClick={(e) => signIn("github", { callbackUrl: "/workspaces" })}
             >
               <Image
                 alt="github icon"

@@ -2,19 +2,41 @@
 import { FC, useState } from "react";
 import PageTemplate from "@/components/PageTemplate";
 import clsx from "clsx";
-import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
+import { trpc } from "@/lib/trpc";
+import { toast } from "react-hot-toast";
 
-interface pageProps {}
-
-const CreateWorkspace: FC<pageProps> = ({}) => {
+const CreateWorkspace: FC = ({}) => {
   const [value, setValue] = useState("");
+  const [err, setError] = useState(false);
   const router = useRouter();
+  let toastId = "some-id";
+  const mutation = trpc.workspace.checkWorkspaceExist.useMutation({
+    onError: (error) => {
+      toast.error(error.message, { id: toastId });
+    },
+    onSuccess: () => {
+      toast.dismiss(toastId);
+      router.push(`/workspaces/${value.split(".")[0]}`);
+    },
+  });
+  const handleUserClick = (e: React.MouseEvent) => {
+    if (err) {
+      return;
+    } else if (value === "") {
+      setError(true);
+    } else {
+      mutation.mutate({
+        workspaceName: value.split(".")[0],
+      });
+      toast.loading("Checking workspace info", { id: toastId });
+    }
+  };
   const inputClasses = clsx(
     "flex items-center gap-3 rounded-lg border-[1px] border-nobleBlack-500 bg-nobleBlack-600 p-3",
     {
       "flex items-center gap-3 rounded-lg border-[1px] border-red-500 bg-nobleBlack-600 p-3":
-        value === "" || !value.endsWith(".artificium.app") ? true : false,
+        err,
     }
   );
   return (
@@ -33,7 +55,15 @@ const CreateWorkspace: FC<pageProps> = ({}) => {
               <div className={inputClasses} id="input_box">
                 <input
                   className="border-none bg-transparent outline-none"
-                  onChange={(e) => setValue(e.target.value)}
+                  onChange={(e) => {
+                    setValue(e.currentTarget.value);
+                    setError(
+                      e.currentTarget.value === "" ||
+                        !e.currentTarget.value.endsWith(".artificium.app")
+                        ? true
+                        : false
+                    );
+                  }}
                 />
                 <p className="text-sm text-nobleBlack-300">
                   Your workspace URL
@@ -44,24 +74,17 @@ const CreateWorkspace: FC<pageProps> = ({}) => {
               </div>
               <button
                 type="button"
-                onClick={(e) => {
-                  if (value === "" || !value.endsWith("artificium.app")) {
-                    return;
-                  } else {
-                    router.push(`/workspaces/${value.split(".")[0]}`);
-                  }
-                }}
+                onClick={handleUserClick}
                 className="rounded-lg bg-steamGreen-500 p-3 text-sm font-semibold capitalize text-nobleBlack-700 hover:bg-steamGreen-700"
               >
                 join workspace
               </button>
             </div>
             <div className="text-sm tracking-wide text-red-500">
-              {value === "" ? (
-                <p>url field can&apos;t be empty</p>
-              ) : !value.endsWith(".artificium.app") ? (
+              {err && value === "" && <p>url field can&apos;t be empty</p>}
+              {err && !value.endsWith(".artificium.app") && (
                 <p>url must end with .artificium.app</p>
-              ) : null}
+              )}
             </div>
           </div>
           <div className="flex w-full items-center justify-center font-medium text-nobleBlack-300">

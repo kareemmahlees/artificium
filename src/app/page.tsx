@@ -1,5 +1,11 @@
 import Link from "next/link";
 import { FC } from "react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Artificium",
+  description: "Empowering your digital journey",
+};
 
 export default function Home() {
   return (
