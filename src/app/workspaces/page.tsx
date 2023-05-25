@@ -5,19 +5,50 @@ import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import { trpc } from "@/lib/trpc";
 import { toast } from "react-hot-toast";
+import { useSession } from "next-auth/react";
+import { Info } from "lucide-react";
 
 const CreateWorkspace: FC = ({}) => {
   const [value, setValue] = useState("");
   const [err, setError] = useState(false);
   const router = useRouter();
+  const session = useSession();
   let toastId = "some-id";
   const mutation = trpc.workspace.checkWorkspaceExist.useMutation({
     onError: (error) => {
       toast.error(error.message, { id: toastId });
     },
-    onSuccess: () => {
-      toast.dismiss(toastId);
-      router.push(`/workspaces/${value.split(".")[0]}`);
+    onSuccess: (data) => {
+      if (data.members.some((el) => el.email === session.data?.user?.email)) {
+        toast.custom(
+          <div className="flex flex-col items-center space-y-5 rounded-lg bg-white p-5 text-black">
+            <h3 className="text-lg font-bold">
+              You already joined this workspace
+            </h3>
+            <div className="flex items-center gap-6">
+              <button
+                onClick={(e) => toast.dismiss(toastId)}
+                className="rounded-lg bg-nobleBlack-600 px-4 py-2 font-semibold text-white hover:bg-nobleBlack-500"
+              >
+                Change workspace
+              </button>
+              <button
+                onClick={(e) => {
+                  toast.dismiss(toastId);
+                  router.push(`/workspaces/${data.name}/dashboard`);
+                }}
+                className="rounded-lg bg-steamGreen-500 px-4 py-2 font-semibold text-black hover:bg-steamGreen-700"
+              >
+                Go to workspace
+              </button>
+            </div>
+          </div>,
+          { id: toastId, icon: <Info fill="gray" />, duration: 8000 }
+        );
+      } else {
+        toast.dismiss(toastId);
+        router.push(`/workspaces/${value.split(".")[0]}`);
+      }
     },
   });
   const handleUserClick = (e: React.MouseEvent) => {

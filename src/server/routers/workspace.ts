@@ -18,6 +18,13 @@ export const workspaceRouter = router({
         where: {
           name: input.workspaceName,
         },
+        include: {
+          members: {
+            select: {
+              email: true,
+            },
+          },
+        },
       });
       if (!workspace) {
         throw new TRPCError({
@@ -25,6 +32,7 @@ export const workspaceRouter = router({
           message: "Workspace doesn't exist",
         });
       }
+      return workspace;
     }),
   getWorkspaceInfo: procedure
     .input(z.object({ workspaceName: z.string() }))
