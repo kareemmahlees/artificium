@@ -41,11 +41,39 @@ export const workspaceRouter = router({
         where: {
           name: input.workspaceName,
         },
-        include: {
+        select: {
+          name: true,
+          id: true,
           members: {
             select: {
               name: true,
               image: true,
+            },
+          },
+        },
+      });
+      const command = new GetObjectCommand({
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: `${input.workspaceName}.png`,
+      });
+      const signedUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
+      return {
+        ...workspaceData,
+        signedUrl,
+      };
+    }),
+  getWorkspaceDetails: procedure
+    .input(z.object({ workspaceName: z.string() }))
+    .query(async ({ input }) => {
+      const workspaceData = await prisma.workspace.findFirst({
+        where: {
+          name: input.workspaceName,
+        },
+        include: {
+          members: true,
+          projects: {
+            select: {
+              name: true,
             },
           },
         },
